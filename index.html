@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hugefantacy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.css" rel="stylesheet"/>
+    <link href="css/font-awesome.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+
+    <!-- custom css -->
+    <link href="css/custom/custom.css" rel="stylesheet" />
+
+</head>
+<body ng-app="hugefantacy" ng-controller="mainController">
+<div class="container-fluid">
+    <div ui-view></div>
+</div>
+<!-- jquery module -->
+<script src="js/jquery.js"></script>f
+<script src="js/socket.io.js"></script>
+<!-- bootstrap module -->
+<script src="js/bootstrap.js"></script>
+
+<!-- angular modules -->
+<script src="js/angular.js"></script>
+<script src="js/angular-ui-router.js"></script>
+<script src="js/angular-messages.js"></script>
+<script src="js/ngStorage.js"></script>
+
+<!-- application modules -->
+<script src="app/app.js"></script>
+<script src="app/config.js"></script>
+<script src="app/constants.js"></script>
+
+<!-- directives -->
+<script src="app/directives/home-page-header.js"></script>
+<script src="app/directives/sign-in-page-header.js"></script>
+<script src="app/directives/sign-up-page-header.js"></script>
+
+<!-- app controllers -->
+<script src="app/controllers/common/main.js"></script>
+<script src="app/controllers/common/login.js"></script>
+<script src="app/controllers/common/register.js"></script>
+<script src="app/controllers/room/chatRoom.js"></script>
+
+
+<!-- app services -->
+<script src="app/services/socket-io-connection/socket.js"></script>
+<script src="app/services/common/login.js"></script>
+<script src="app/services/common/register.js"></script>
+<script src="app/services/common/userInfoStorage.js"></script>
+
+</body>
+</html>
