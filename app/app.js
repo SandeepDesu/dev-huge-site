@@ -1,5 +1,7 @@
 var app = angular.module("hugefantacy",[
     'ui.router',
     'ngMessages',
-    'ngStorage'
+    'ngStorage',
+    'satellizer',
+    'ngResource'
 ]);

@@ -1,106 +1,239 @@
-<home-page-header></home-page-header>
+<chat-page-header></chat-page-header>
 <div ng-controller="chatRoomController">
     <div class="container" style="margin-top: 30px;">
         <div class="profile-head">
             <div class="col-md- col-sm-4 col-xs-12">
-                <img src="http://www.newlifefamilychiropractic.net/wp-content/uploads/2014/07/300x300.gif" class="img-responsive" />
+                <img ng-src="{{userInfo.picture}}"
+                     class="img-responsive"/>
                 <h6>{{userInfo.full_name}}</h6>
-            </div><!--col-md-4 col-sm-4 col-xs-12 close-->
+            </div>
+            <!--col-md-4 col-sm-4 col-xs-12 close-->
 
 
             <div class="col-md-5 col-sm-5 col-xs-12">
                 <h5>{{userInfo.full_name}}</h5>
+
                 <p>{{userInfo.status_message}} </p>
-                <ul>
+                <ul ng-show="!isEditable">
                     <li><span class="glyphicon glyphicon glyphicon-transfer"></span> {{userInfo.unique_id}}</li>
                     <li><span class="glyphicon glyphicon-user"></span> {{userInfo.date_of_birth | date}}</li>
                     <li><span class="glyphicon glyphicon-home"></span> {{userInfo.address}}</li>
-                    <li><span class="glyphicon glyphicon-phone"></span> <a href="#" title="call">{{userInfo.phone_number}}</a></li>
-                    <li><span class="glyphicon glyphicon-envelope"></span><a href="#" title="mail">{{userInfo.email}}</a></li>
+                    <li><span class="glyphicon glyphicon-phone"></span> <a title="call">{{userInfo.phone_number}}</a>
+                    </li>
+                    <li><span class="glyphicon glyphicon-envelope"></span><a title="mail">{{userInfo.email}}</a></li>
 
                 </ul>
+                <div class="container-fluid" ng-show="isEditable">
+                    <div class="input-group">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <input class="form-control" type="text" ng-model="userInfo.date_of_birth"
+                               placeholder="Enter date of birth"/>
+                    </div>
+                    <div class="input-group">
+                        <span class="glyphicon glyphicon-home"></span>
+                        <input class="form-control" type="text" ng-model="userInfo.address"
+                               placeholder="Enter your address"/>
+                    </div>
+                    <div class="input-group">
+                        <span class="glyphicon glyphicon-phone"></span>
+                        <input class="form-control" type="text" ng-model="userInfo.phone_number"
+                               placeholder="Enter phone number"/>
+                    </div>
+                    <div class="input-group">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                        <input class="form-control" type="text" ng-model="userInfo.email"
+                               placeholder="Enter your email"/>
+                    </div>
+                </div>
 
 
-            </div><!--col-md-8 col-sm-8 col-xs-12 close-->
+            </div>
+            <!--col-md-8 col-sm-8 col-xs-12 close-->
+            <div class="input-group">
+                <button class="btn btn-block" ng-show="!isEditable" ng-click="isEditable =!isEditable">Edit</button>
+                <button class="btn btn-block" ng-show="isEditable" ng-click="updateInfo()">Save</button>
+            </div>
 
-
-
-
-        </div><!--profile-head close-->
-    </div><!--container close-->
-    <div class="main_section" >
+        </div>
+        <!--profile-head close-->
+    </div>
+    <!--container close-->
+    <div class="main_section">
         <div class="container">
             <div class="chat_container">
                 <div class="col-sm-3 chat_sidebar">
                     <div class="row">
                         <div id="custom-search-input">
                             <div class="input-group col-md-12">
-                                <input type="text" class="search-query form-control" ng-model="searchFriend"  placeholder="Conversation" />
+                                <input type="text" class="search-query form-control" ng-model="searchFriend"
+                                       placeholder="Conversation"/>
                                 <button class="btn btn-danger" type="button" ng-click="search()">
                                     <span class=" glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
                             <div class="input-group col-md-12">
-                                <span class="has-error">{{sentRequestStatus}}</span>
+                                <span class="has-error">{{requestStatus}}</span>
                             </div>
                         </div>
                         <div class="dropdown all_conversation">
-                            <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-weixin" aria-hidden="true"></i>
                                 All Conversations
                                 <span class="caret pull-right"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                <li><a href="#">Friends {{friendsCount}}</a></li>
-                                <li><a href="#">Friend requests {{friendRequestCount}}</a></li>
-                                <li><a href="#">Sent requests {{sentRequestCount}}</a></li>
-                                <li><a href="#">Groups {{groupCount}}</a></li>
+                                <li><a ng-click="getFriends()">Friends {{friendsCount}}</a></li>
+                                <li><a ng-click="getFriendRequests()">Friend requests {{friendRequestCount}}</a></li>
+                                <li><a ng-click="getFriendsSent()">Sent requests {{sentRequestCount}}</a></li>
+                                <li><a ng-click="getGroups()">Groups {{groupCount}}</a></li>
+                                <li><a ng-click="createGroups()">Create a group</a></li>
                             </ul>
                         </div>
                         <div class="member_list">
                             <ul class="list-unstyled">
-                                //left side menu
+                                <li class="left clearfix" ng-if="displaySideMenu ==='friendRequests'"
+                                    ng-repeat="friend in listFriendRequests">
+                                     <span class="chat-img pull-left">
+                                            <img ng-src="{{friend.picture}}" alt="User Avatar" class="img-circle">
+                                           </span>
+
+                                    <div class="chat-body clearfix">
+                                        <div class="header_sec">
+                                            <strong class="primary-font">{{friend.full_name}}</strong>
+                                        </div>
+                                        <div class="contact_sec">
+                                            <button ng-click="friendRequestAccept(friend._id)">Accept</button>
+                                            <button ng-click="friendRequestDelete(friend._id)">Delete</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left clearfix" ng-if="displaySideMenu ==='sentRequests'"
+                                    ng-repeat="friend in listFriendRequestsSent">
+                                     <span class="chat-img pull-left">
+                                            <img ng-src="{{friend.picture}}" alt="User Avatar" class="img-circle">
+                                           </span>
+
+                                    <div class="chat-body clearfix">
+                                        <div class="header_sec">
+                                            <strong class="primary-font">{{friend.full_name}}</strong>
+                                        </div>
+                                        <div class="contact_sec">
+                                            <button ng-click="friendRequestDelete(friend._id)">Delete</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left clearfix" ng-if="displaySideMenu ==='friends'"
+                                    ng-repeat="friend in friends" ng-click="chatInit(friend)">
+                                           <span class="chat-img pull-left">
+                                            <img ng-src="{{friend.picture}}" alt="User Avatar" class="img-circle">
+                                           </span>
+
+                                    <div class="chat-body clearfix">
+                                        <div class="header_sec">
+                                            <strong class="primary-font">{{friend.full_name}}</strong>
+                                        </div>
+                                        <div class="contact_sec">
+                                            <strong class="primary-font">{{friend.email}}</strong> <span
+                                                class="badge pull-right" ng-show="friend.onLine">online</span><span
+                                                class="badge pull-right" ng-show="!friend.onLine">offline</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left clearfix" ng-if="displaySideMenu ==='create-group'">
+                                    <div class="chat-body">
+                                        <div class="header_sec input-group">
+                                            <input type="text" placeholder="Enter group name" ng-model="newGroupName">
+                                        </div>
+                                        <div class="header_sec input-group">
+                                            <span ng-repeat="friend in user.selected">
+                                                <label class="checkbox" for="{{friend._id}}">
+                                                    <input type="checkbox" ng-model="friend.status" name="group"
+                                                           id="{{friend._id}}"/>
+                                                    {{friend.full_name}}
+                                                </label>
+                                            </span>
+                                        </div>
+                                        <div class="header_sec input-group">
+                                            <button ng-click="addFriendsGroup()">Add</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left clearfix" ng-if="displaySideMenu ==='get-groups'"
+                                    ng-repeat="friend in groups" ng-click="groupInit(friend)">
+                                    <span class="chat-img pull-left">
+                                            <img ng-src="{{friend.picture}}" alt="User Avatar" class="img-circle">
+                                           </span>
+
+                                    <div class="chat-body clearfix">
+                                        <div class="header_sec">
+                                            <strong class="primary-font">{{friend.full_name}}</strong>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
-                        </div></div>
+                        </div>
+                    </div>
                 </div>
                 <!--chat_sidebar-->
-
 
                 <div class="col-sm-9 message_section">
                     <div class="row">
                         <div class="new_message_head">
-                            <div class="pull-left"><button><i class="fa fa-plus-square-o" aria-hidden="true"></i> New Message</button></div><div class="pull-right"><div class="dropdown">
-                            <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-cogs" aria-hidden="true"></i>  Setting
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Profile</a></li>
-                                <li><a href="#">Logout</a></li>
-                            </ul>
-                        </div></div>
-                        </div><!--new_message_head-->
+                            <div class="pull-left">
+                                <button><i class="fa fa-plus-square-o" aria-hidden="true"></i>{{friendName}}</button>
+                            </div>
+                            <div class="pull-right">
+                                <div class="dropdown">
+                                    <button class="dropdown-toggle" type="button" id="dropdownMenu1"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-cogs" aria-hidden="true"></i> Setting
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                        <li><a href="#">Action</a></li>
+                                        <li><a href="#">Profile</a></li>
+                                        <li><a href="#">Logout</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!--new_message_head-->
 
                         <div class="chat_area">
-                            <ul class="list-unstyled">
+                            <ul class="list-unstyled" schroll-bottom="chatMessages">
+                                <li ng-repeat="messages in chatMessages"
+                                    ng-class="{'left': messages.person_id !== userInfo._id,'right': messages.person_id === userInfo._id}"
+                                    class="clearfix">
+                     <span class="chat-img1"
+                           ng-class="{'pull-left': messages.person_id !== userInfo._id,'pull-right': messages.person_id === userInfo._id}">
+                     <img ng-src="{{messages.picture}}" alt="User Avatar" class="img-circle">
+                     </span>
 
-
-
-
+                                    <div class="chat-body1 clearfix">
+                                        <p>{{messages.message}}</p>
+                                    </div>
+                                </li>
 
                             </ul>
-                        </div><!--chat_area-->
+                        </div>
+                        <!--chat_area-->
                         <div class="message_write">
-                            <textarea class="form-control" placeholder="type a message"></textarea>
-                            <div class="clearfix"></div>
-                            <div class="chat_bottom"><a href="#" class="pull-left upload_btn"><i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                            <textarea class="form-control" ng-model="textMessage"
+                                      placeholder="type a message" ng-change="isTyping()"></textarea>
+
+                            <div class="clearfix"><span>{{isTypingPerson}}</span></div>
+                            <div class="chat_bottom"><a ui-sref="chat.user" class="pull-left upload_btn"><i
+                                    class="fa fa-cloud-upload" aria-hidden="true"></i>
                                 Add Files</a>
-                                <a href="#" class="pull-right btn btn-success">
-                                    Send</a></div>
+                                <button ng-click="sendMessage()" class="pull-right btn btn-success">
+                                    Send
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div> <!--message_section-->
+                </div>
+                <!--message_section-->
             </div>
         </div>
     </div>

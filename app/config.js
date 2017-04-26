@@ -1,4 +1,13 @@
-app.config(function($stateProvider, $urlRouterProvider) {
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function ($stateProvider, $urlRouterProvider, $authProvider) {
+
+    $authProvider.facebook({
+        clientId: '1173066672804053'
+    });
+
+    $authProvider.google({
+        clientId: '563546280609-cuva1dgflqf76osoqguv2i6baikjr0nh.apps.googleusercontent.com'
+    });
+
     $urlRouterProvider.otherwise('/home');
     $stateProvider
         .state('home', {
@@ -34,4 +43,4 @@ app.config(function($stateProvider, $urlRouterProvider) {
         url:'/user',
         templateUrl:'views/chat/chat-room.html'
     })
-});
+}]);
